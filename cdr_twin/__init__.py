@@ -6,6 +6,14 @@ CDR Twin Package - Research Culture Sustainability Index Simulation
 
 This package provides tools for simulating and analyzing research culture
 sustainability in educational institutions.
+
+Quick Start:
+    To run the Streamlit application:
+    
+    $ streamlit run app.py
+    
+    IMPORTANT: Do NOT run with 'python app.py' as Streamlit requires
+    its own runtime context.
 """
 
 __version__ = "1.0.0"

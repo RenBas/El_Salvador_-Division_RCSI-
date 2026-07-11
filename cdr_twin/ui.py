@@ -82,8 +82,8 @@ def get_figure_download_link(fig, filename="chart.html", link_text="Download cha
     st.markdown(href, unsafe_allow_html=True)
 
 def app():
-    st.set_page_config(page_title="CDO Research Culture Sustainability Framework", layout="wide")
-    st.markdown("<h1 style='text-align: center; color: #0D2B5E;'>CDO Division Research Culture Sustainability Framework</h1>", unsafe_allow_html=True)
+    st.set_page_config(page_title="El Salvador Division Research Culture Sustainability Index", layout="wide")
+    st.markdown("<h1 style='text-align: center; color: #0D2B5E;'>El Salvador Division Research Culture Sustainability Index</h1>", unsafe_allow_html=True)
 
     # Session state initialisation
     for key, default in [('max_schools', 200), ('num_schools', 0), ('total_teachers', 0)]:

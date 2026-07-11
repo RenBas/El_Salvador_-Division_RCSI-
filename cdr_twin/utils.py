@@ -1,18 +1,39 @@
-# ============================================================
-# utils.py – helper functions (classification, interpretation, date parsing)
-# ============================================================
+"""
+utils.py – Utility functions for CDR Twin simulation.
 
-from typing import Tuple, Any
+This module provides helper functions for classification, interpretation,
+date parsing, and glossary creation.
+"""
+
+from typing import Tuple, Any, Dict
 import numpy as np
+
 from .constants import RCSI_LEVELS, BASE_YEAR
 
+
 def classify_rcsi(value: float) -> str:
-    for low, high, lev in RCSI_LEVELS:
+    """
+    Classify an RCSI value into a risk/stability level.
+    
+    Args:
+        value: RCSI score (0.0 to 1.0)
+        
+    Returns:
+        Classification string (e.g., "Very Low", "Low", etc.)
+    """
+    for low, high, level in RCSI_LEVELS:
         if low <= value < high:
-            return lev
+            return level
     return "Very High"
 
+
 def get_rcsi_interpretation_table() -> str:
+    """
+    Generate a markdown table interpreting RCSI score ranges.
+    
+    Returns:
+        Markdown-formatted table with RCSI interpretations.
+    """
     return """
 | RCSI Score Range | Risk/Stability Level | School-Level Policy Implication |
 | :--- | :--- | :--- |
@@ -23,8 +44,18 @@ def get_rcsi_interpretation_table() -> str:
 | **> 0.100** | Critical / Unstable | Full operational review triggered; Division-level contingency protocols are activated. |
 """
 
+
 def interpret_avg_milestone(avg_milestone: float) -> str:
-    desc = [
+    """
+    Interpret the average milestone value as a human-readable description.
+    
+    Args:
+        avg_milestone: Average milestone value
+        
+    Returns:
+        Formatted string describing the milestone position.
+    """
+    descriptions = [
         (0.5, "between M0 and M1"),
         (1.5, "between M1 and M2"),
         (2.5, "between M2 and M3"),
@@ -33,26 +64,66 @@ def interpret_avg_milestone(avg_milestone: float) -> str:
         (5.5, "between M5 and M6"),
         (float('inf'), "at or beyond M6"),
     ]
-    for threshold, d in desc:
+    for threshold, desc in descriptions:
         if avg_milestone < threshold:
-            return f"{avg_milestone:.1f} → {d}"
+            return f"{avg_milestone:.1f} → {desc}"
     return f"{avg_milestone:.1f} → at or beyond M6"
 
+
 def interpret_utilisation_rate(rate: float) -> Tuple[str, str]:
-    if rate < 20: return "Very Low", "Rarely adopted."
-    elif rate < 40: return "Low", "Limited adoption."
-    elif rate < 60: return "Moderate", "Half adopted."
-    elif rate < 80: return "High", "Strong translation."
-    else: return "Very High", "Excellent utilisation."
+    """
+    Interpret a utilisation rate percentage.
+    
+    Args:
+        rate: Utilisation rate as a percentage (0-100)
+        
+    Returns:
+        Tuple of (level, description) strings.
+    """
+    if rate < 20:
+        return "Very Low", "Rarely adopted."
+    elif rate < 40:
+        return "Low", "Limited adoption."
+    elif rate < 60:
+        return "Moderate", "Half adopted."
+    elif rate < 80:
+        return "High", "Strong translation."
+    else:
+        return "Very High", "Excellent utilisation."
+
 
 def classify_utilisation(rate: float) -> str:
-    if rate < 20: return "Very Low"
-    elif rate < 40: return "Low"
-    elif rate < 60: return "Moderate"
-    elif rate < 80: return "High"
-    else: return "Very High"
+    """
+    Classify a utilisation rate into a category.
+    
+    Args:
+        rate: Utilisation rate as a percentage (0-100)
+        
+    Returns:
+        Classification string.
+    """
+    if rate < 20:
+        return "Very Low"
+    elif rate < 40:
+        return "Low"
+    elif rate < 60:
+        return "Moderate"
+    elif rate < 80:
+        return "High"
+    else:
+        return "Very High"
+
 
 def month_str_to_num(month_str: Any) -> int:
+    """
+    Convert a month string (YYYY-MM) to a month number relative to BASE_YEAR.
+    
+    Args:
+        month_str: Month string in YYYY-MM format or similar
+        
+    Returns:
+        Month number (0-based from BASE_YEAR), or 0 if conversion fails.
+    """
     try:
         parts = str(month_str).strip().split('-')
         if len(parts) == 2:
@@ -61,13 +132,30 @@ def month_str_to_num(month_str: Any) -> int:
         pass
     return 0
 
+
 def date_to_month_num(d: Any) -> int:
+    """
+    Convert a datetime object to a month number relative to BASE_YEAR.
+    
+    Args:
+        d: datetime-like object with year and month attributes
+        
+    Returns:
+        Month number (0-based from BASE_YEAR), or 0 if conversion fails.
+    """
     try:
         return (d.year - BASE_YEAR) * 12 + d.month
     except (ValueError, TypeError, AttributeError):
         return 0
 
-def create_glossary() -> dict:
+
+def create_glossary() -> Dict[str, str]:
+    """
+    Create a glossary of terms used in the CDR Twin system.
+    
+    Returns:
+        Dictionary mapping terms to their definitions.
+    """
     return {
         "R (Readiness)": "Measures the school's preparedness and foundational conditions for research, including infrastructure and mindset.",
         "A (Awareness)": "Indicates the level of research awareness among teachers and leaders. The threshold for M0→M1 is **A ≥ 0.8**.",
